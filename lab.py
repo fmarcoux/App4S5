@@ -21,12 +21,7 @@ def p1():
     print(H)
     amp = 20*np.log10(np.abs(H))
     angle = np.angle(H)
-    plt.plot(amp)
-    plt.savefig("photos\\ReponseFrequence de la fonction de transfert")
-    plt.close()
-    plt.plot(angle)
-    plt.savefig("photos\\Angle de la fonction de transfert")
-    plt.close()
+
 
     #d
     impulsion = np.zeros(100)
