@@ -69,8 +69,10 @@ def rotation(img):
 
 def filtreHauteFrequence():
     #a la main avec wc = 4789
+    # utilise ce lien la pour voir la demarche wolfram alpha : https://www.wolframalpha.com/input?i=1%2F+%28%28%28+3200+*+%28z-1%29%2F%28z%2B1%29+%29%5E2%29%2F%284789.14%29%5E2+%2B+%28sqrt%282%29%2F%284789.14%29+*%283200+*+%28z-1%29%2F%28z%2B1%29%29%29+%2B+1%29
     num = np.array([1, 2,1])  #z^2 +2z +1
-    den = np.array([2.39146 , -1.107 , 0.5015]) #2.39146z^2 -1.107z + 0.5015
+    den = np.array([2.3914 , -1.107 , 0.5015]) #2.3914z^2 -1.107z + 0.5015
+    plt.gray()
     imageFiltrerMain = filterImage(num,den,np.load("goldhillInit\\goldhill_bruit.npy"))
     matplotlib.image.imsave("goldhillFinale\\ImgFiltreMain.png", arr=imageFiltrerMain)
     #zplane(num,den)
@@ -82,6 +84,7 @@ def filtreHauteFrequence():
     ordre,fc,type = KeepLowerOrdre()
     print(f"Le type de filtre retenu est  : {type} avec une ordre de {ordre} et une frequence critique de {fc}")
     num, den = signal.ellip(N=ordre, Wn=fc, fs=1600, rp=0.2, rs=60)
+    plt.gray()
     imageFiltrerPython = filterImage(num, den, np.load("goldhillInit\\goldhill_bruit.npy"))
     matplotlib.image.imsave("goldhillFinale\\ImgFiltreElliptique.png", arr=imageFiltrerPython)
     #zplane(num,den)
