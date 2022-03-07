@@ -83,5 +83,6 @@ def zplane(b, a, filename=None):
         plt.show()
     else:
         plt.savefig(filename)
+        plt.close()
 
     return z, p, k

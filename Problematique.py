@@ -7,6 +7,12 @@ from zplane import zplane
 
 PHOTOREPOSITORY = "photos\\"
 
+def saveFilterResponse(num,den,type):
+    w, H = signal.freqz(num, den)
+    amp = 20 * np.log10(np.abs(H))
+    angle = np.angle(H)
+    savePNG(amp, f"Amplitude {type}")
+    savePNG(angle, f"Angle {type}")
 
 def filterImage(num,den,img):
     row = len(img)
@@ -24,28 +30,18 @@ def savePNG(data,name):
     plt.close()
 
 
-def abberation():
+def abberation(img):
     pass
     zero = [-0.9*np.exp(np.pi/2j),-0.9*np.exp(-np.pi/2j),-0.95*np.exp(7*np.pi/8j),-0.9*np.exp(-7*np.pi/8j)]
     pole = [-1,-0.98,0,0.8]
-    #
+
     num = np.poly(pole)
     den = np.poly(zero)
 
-    #zplane(num,den)
-
-    w, H = signal.freqz(num, den)
-    amp = 20 * np.log10(np.abs(H))
-    angle = np.angle(H)
-    #savePNG(amp,"Amplitude Filtre aberation")
-    #savePNG(angle,"Angle Filtre aberation")
-
-
-    plt.gray()
-    img = np.load("goldhillInit\\goldhill_aberrations.npy")
+    saveFilterResponse(num,den,"Filtre abbération")
+    zplane(num,den,filename="photos\\ZplaneFiltreAbberation.png")
 
     newImg = filterImage(num,den,img)
-
     matplotlib.image.imsave("goldhillFinale\\abberationEnleve.png", arr=newImg)
     return newImg
 
@@ -58,41 +54,38 @@ def rotation(img):
     matriceRotation = [[0, 1], [-1, 0]]
     for i in range(0,nbRow):
         for j in range(0,nbColumn):
-            coordonnex = -nbRow+1+i # le point (0,0)  de l'image revien au coordonées (-N,M) dans le plan E (N = nbColonne M =nombre de ligne)
+            coordonnex = -nbRow+1+i # le point (0,0)  de l'image revient au coordonées (-N,M) dans le plan E (N = nbColonne M =nombre de ligne)
             coordonney = nbColumn-1-j
             coordonne = np.transpose([coordonnex,coordonney])
             x,y = np.matmul(matriceRotation,coordonne) #calcul des nouvelles coordonnées avec les coordonnés transformées
-            newImg[x][y] = img[coordonnex][coordonney][1] # le [1] est du au formattage de limage
+            newImg[x][y] = img[coordonnex][coordonney] # le [1] est du au formattage de limage
     plt.gray()
     matplotlib.image.imsave("goldhillFinale\\rotation.png", arr=newImg)
     return newImg
 
-def filtreHauteFrequence():
+def filtreHauteFrequence(img):
     #a la main avec wc = 4789
     # utilise ce lien la pour voir la demarche wolfram alpha : https://www.wolframalpha.com/input?i=1%2F+%28%28%28+3200+*+%28z-1%29%2F%28z%2B1%29+%29%5E2%29%2F%284789.14%29%5E2+%2B+%28sqrt%282%29%2F%284789.14%29+*%283200+*+%28z-1%29%2F%28z%2B1%29%29%29+%2B+1%29
     num = np.array([1, 2,1])  #z^2 +2z +1
     den = np.array([2.3914 , -1.107 , 0.5015]) #2.3914z^2 -1.107z + 0.5015
-    plt.gray()
-    imageFiltrerMain = filterImage(num,den,np.load("goldhillInit\\goldhill_bruit.npy"))
-    matplotlib.image.imsave("goldhillFinale\\ImgFiltreMain.png", arr=imageFiltrerMain)
-    #zplane(num,den)
-    w, H = signal.freqz(num, den)
-    amp = 20 * np.log10(np.abs(H))
-    angle = np.angle(H)
-    #savePNG(amp,"Amplitude Filtre haute frequence a la main")
-    #savePNG(angle,"Angle Filtre haute frequence a la main")
+
+
+    saveFilterResponse(num,den,"Filtre haute frequence bilineaire")
+
+    imageFiltrerMain = filterImage(num,den,img)
+    matplotlib.image.imsave("goldhillFinale\\ImgFiltreBilinéaire.png", arr=imageFiltrerMain)
+    zplane(num,den,filename="photos\\ZplaneHauteFreqBilineaire")
+
     ordre,fc,type = KeepLowerOrdre()
     print(f"Le type de filtre retenu est  : {type} avec une ordre de {ordre} et une frequence critique de {fc}")
-    num, den = signal.ellip(N=ordre, Wn=fc, fs=1600, rp=0.2, rs=60)
-    plt.gray()
-    imageFiltrerPython = filterImage(num, den, np.load("goldhillInit\\goldhill_bruit.npy"))
+    num1, den1 = signal.ellip(N=ordre, Wn=fc, fs=1600, rp=0.2, rs=60)
+
+    saveFilterResponse(num1,den1,"Filtre haute frequence élliptique")
+
+    imageFiltrerPython = filterImage(num1, den1, img)
     matplotlib.image.imsave("goldhillFinale\\ImgFiltreElliptique.png", arr=imageFiltrerPython)
-    #zplane(num,den)
-    w, H = signal.freqz(num, den)
-    amp = 20 * np.log10(np.abs(H))
-    angle = np.angle(H)
-    #savePNG(amp, "Amplitude Filtre haute frequence eliptique")
-    #savePNG(angle, "Angle Filtre haute frequence eliptique")
+    zplane(num1,den1,filename="photos\\ZplaneHauteFreqPython")
+
     return imageFiltrerPython
 
 def compression(img, percent):
@@ -105,11 +98,12 @@ def compression(img, percent):
             for j in range(0,len(img)):
                 img_passee[lines,j]=0
 
-    plt.gray()
+
     matplotlib.image.imsave("goldhillFinale\\compresse.png", arr=img_passee)
     output = np.matmul(np.linalg.inv(passage),img_passee)
     matplotlib.image.imsave("goldhillFinale\\decompresse.png", arr=output)
     #print(vector)
+
 def KeepLowerOrdre():
     fs = 1600
     ws = 750
@@ -148,8 +142,9 @@ def KeepLowerOrdre():
 
 
 if __name__ == "__main__":
-    #abberation()
-
-    #rotation(matplotlib.image.imread("goldhillInit\\goldhill_rotate.png"))
-    #filtreHauteFrequence()
-    compression(matplotlib.image.imread("goldhillInit\\goldhill.png"),0.5)
+    plt.gray()
+    img= np.load("goldhillInit\\image_complete.npy")
+    img = abberation(img)
+    img = rotation(img)
+    img=filtreHauteFrequence(img)
+    compression(img,0.5)
