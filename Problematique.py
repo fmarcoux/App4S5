@@ -95,9 +95,22 @@ def filtreHauteFrequence():
     #savePNG(angle, "Angle Filtre haute frequence eliptique")
     return imageFiltrerPython
 
-def compression():
-    pass
-
+def compression(img, percent):
+    covariance = np.cov(img)
+    values, vector = np.linalg.eig(covariance)
+    passage = np.transpose(vector)
+    if percent == 50:
+        for lines in range(0,len(img)):
+            if lines%2 !=0:
+                for j in range(0,len(img)):
+                    img[lines,j]=0
+    elif percent == 70:
+        pass
+    else:
+        return -1
+    output = np.matmul(np.linalg.inv(passage),img)
+    matplotlib.image.imsave("goldhillFinale\\decompresse.png", arr=output)
+    #print(vector)
 def KeepLowerOrdre():
     fs = 1600
     ws = 750
@@ -138,5 +151,5 @@ def KeepLowerOrdre():
 if __name__ == "__main__":
     #abberation()
     #rotation(matplotlib.image.imread("goldhillInit\\goldhill.png"))
-    filtreHauteFrequence()
-    compression()
+    #filtreHauteFrequence()
+    compression(matplotlib.image.imread("goldhillInit\\goldhill.png"), 50)
