@@ -50,6 +50,7 @@ def abberation():
     return newImg
 
 def rotation(img):
+
     nbRow = len(img)
     nbColumn = len(img[0])
     newImg = np.zeros((nbColumn, nbRow)) #puisquon tourne de 90 degree a droite,
@@ -61,8 +62,7 @@ def rotation(img):
             coordonney = nbColumn-1-j
             coordonne = np.transpose([coordonnex,coordonney])
             x,y = np.matmul(matriceRotation,coordonne) #calcul des nouvelles coordonnées avec les coordonnés transformées
-            newImg[x][y] = img[i][j] #on utilise le point i,j de l'image puisque les coordonnées transformées
-            # sont utiles seulement pour calculer les nouvelles coordonnées
+            newImg[x][y] = img[coordonnex][coordonney][1] # le [1] est du au formattage de limage
     plt.gray()
     matplotlib.image.imsave("goldhillFinale\\rotation.png", arr=newImg)
     return newImg
@@ -150,6 +150,7 @@ def KeepLowerOrdre():
 
 if __name__ == "__main__":
     #abberation()
-    #rotation(matplotlib.image.imread("goldhillInit\\goldhill.png"))
-    #filtreHauteFrequence()
-    compression(matplotlib.image.imread("goldhillInit\\goldhill.png"), 50)
+
+    rotation(matplotlib.image.imread("goldhillInit\\goldhill_rotate.png"))
+    filtreHauteFrequence()
+    compression()
