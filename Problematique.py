@@ -99,16 +99,19 @@ def compression(img, percent):
     covariance = np.cov(img)
     values, vector = np.linalg.eig(covariance)
     passage = np.transpose(vector)
+    img_passee = np.matmul(passage,img)
     if percent == 50:
         for lines in range(0,len(img)):
-            if lines%2 !=0:
+            if lines>len(img/2):
                 for j in range(0,len(img)):
-                    img[lines,j]=0
+                    img_passee[lines,j]=0
     elif percent == 70:
         pass
     else:
         return -1
-    output = np.matmul(np.linalg.inv(passage),img)
+    plt.gray()
+    matplotlib.image.imsave("goldhillFinale\\compresse.png", arr=img_passee)
+    output = np.matmul(np.linalg.inv(passage),img_passee)
     matplotlib.image.imsave("goldhillFinale\\decompresse.png", arr=output)
     #print(vector)
 def KeepLowerOrdre():
@@ -151,6 +154,6 @@ def KeepLowerOrdre():
 if __name__ == "__main__":
     #abberation()
 
-    rotation(matplotlib.image.imread("goldhillInit\\goldhill_rotate.png"))
-    filtreHauteFrequence()
-    compression()
+    #rotation(matplotlib.image.imread("goldhillInit\\goldhill_rotate.png"))
+    #filtreHauteFrequence()
+    compression(matplotlib.image.imread("goldhillInit\\goldhill.png"),50)
