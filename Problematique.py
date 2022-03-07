@@ -100,15 +100,11 @@ def compression(img, percent):
     values, vector = np.linalg.eig(covariance)
     passage = np.transpose(vector)
     img_passee = np.matmul(passage,img)
-    if percent == 50:
-        for lines in range(0,len(img)):
-            if lines>len(img/2):
-                for j in range(0,len(img)):
-                    img_passee[lines,j]=0
-    elif percent == 70:
-        pass
-    else:
-        return -1
+    for lines in range(0,len(img)):
+        if lines>(len(img)*(1-percent)):
+            for j in range(0,len(img)):
+                img_passee[lines,j]=0
+
     plt.gray()
     matplotlib.image.imsave("goldhillFinale\\compresse.png", arr=img_passee)
     output = np.matmul(np.linalg.inv(passage),img_passee)
@@ -156,4 +152,4 @@ if __name__ == "__main__":
 
     #rotation(matplotlib.image.imread("goldhillInit\\goldhill_rotate.png"))
     #filtreHauteFrequence()
-    compression(matplotlib.image.imread("goldhillInit\\goldhill.png"),50)
+    compression(matplotlib.image.imread("goldhillInit\\goldhill.png"),0.5)
