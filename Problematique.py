@@ -1,5 +1,6 @@
 ###Francois Marcoux marf2910
 ###Emmanuel Bolduc bole2202
+import os
 
 import matplotlib
 import matplotlib.image as mpimg
@@ -14,8 +15,8 @@ def saveFilterResponse(num,den,type,show=False):
     w, H = signal.freqz(num, den)
     amp = 20 * np.log10(np.abs(H))
     angle = np.angle(H)
-    savePNG(amp,w, f"Amplitude {type}",show,True)
-    savePNG(angle,w, f"Angle {type}",show,False)
+    savePNG(amp,w, f"Amplitude {type}",angle = False,show=True)
+    savePNG(angle,w, f"Angle {type}",angle=True,show=False)
 
 def filterImage(num,den,img):
     row = len(img)
@@ -135,7 +136,6 @@ def compression(img, percent):
             for j in range(0,len(img)):
                 img_passee[lines,j]=0
 
-
     matplotlib.image.imsave("goldhillFinale\\compresse.png", arr=img_passee)
     output = np.matmul(np.linalg.inv(passage),img_passee)
     matplotlib.image.imsave("goldhillFinale\\decompresse.png", arr=output)
@@ -182,10 +182,14 @@ def KeepLowerOrdre():
 
 
 if __name__ == "__main__":
-    plt.gray()
-    img= np.load("goldhillInit\\image_complete.npy")
-    img = abberation(img)
-    img = rotation(img)
-    img=filtreHauteFrequence(img)
-    compression(img,0.5)
-    compression(img,0.7)
+    try:
+        os.mkdir("photos")
+        os.mkdir("goldhillFinale")
+    finally:
+        plt.gray()
+        img= np.load("goldhillInit\\image_complete.npy")
+        img = abberation(img)
+        img = rotation(img)
+        img=filtreHauteFrequence(img)
+        compression(img,0.5)
+        compression(img,0.7)
