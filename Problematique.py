@@ -1,3 +1,6 @@
+###Francois Marcoux marf2910
+###Emmanuel Bolduc bole2202
+
 import matplotlib
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
@@ -114,10 +117,10 @@ def filtreHauteFrequence(img):
     matplotlib.image.imsave("goldhillFinale\\ImgFiltreElliptique.png", arr=imageFiltrerPython)
 
     plt.imshow(imageFiltrerMain)
-    plt.title("Image filtre avec la methode bilinéaire")
+    plt.title("Image filtrée, methode bilinéaire")
     plt.show()
     plt.imshow(imageFiltrerPython)
-    plt.title("Image filtre avec le filtre elliptique")
+    plt.title("Image filtrée, filtre elliptique")
     plt.show()
 
     return imageFiltrerPython
